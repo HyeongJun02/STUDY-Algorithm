@@ -68,11 +68,10 @@ int main() {
         }
     }
 
-    // 실행 시간 측정 끝
+    // 실행 시간 측정 end
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<nanoseconds>(end - start);
 
-    // 결과 출력
     for (const auto& edge : result) {
         cout << "(" << edge.u << ", " << edge.v << ", " << edge.weight << ")\n";
     }
