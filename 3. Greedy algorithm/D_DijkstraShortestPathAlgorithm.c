@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <limits.h>
+#include <time.h>  // 시간 측정을 위해 추가
 
 #define CITY_COUNT 10
 
@@ -66,6 +67,8 @@ void dijkstra(int graph[CITY_COUNT][CITY_COUNT], int start, int result[CITY_COUN
 }
 
 int main() {
+    clock_t start_time, end_time;  // 시간 측정을 위해 변수 추가
+
     int input[CITY_COUNT][CITY_COUNT] = {
         {0, 12, 15, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX}, // 서울
         {12, 0, INT_MAX, 10, 4, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},       // 천안
@@ -88,12 +91,20 @@ int main() {
         }
     }
 
+    // 실행 시간 측정 시작
+    start_time = clock();
+
     for (int i = 0; i < CITY_COUNT; i++) {
         dijkstra(input, i, result[i]);
     }
 
-    printf("최단 거리 결과 (모든 도시 간 최단 거리):\n");
+    // 실행 시간 측정 종료
+    end_time = clock();
+
     print(result);
+
+    double elapsed_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+    printf("running time: %.6f\n", elapsed_time);
 
     return 0;
 }
