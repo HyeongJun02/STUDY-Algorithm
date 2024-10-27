@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <limits.h>
-#include <time.h>  // 시간 측정을 위해 추가
+#include <time.h>
 
 #define CITY_COUNT 10
 
@@ -9,7 +9,7 @@ const char* city_names[CITY_COUNT] = { "서울", "천안", "원주", "대전", "
 void print(int a[CITY_COUNT][CITY_COUNT]) {
     printf("      ");
     for (int i = 0; i < CITY_COUNT; i++) {
-        printf("%6s", city_names[i]);
+        printf("%s  ", city_names[i]);
     }
     printf("\n");
     for (int i = 0; i < CITY_COUNT; i++) {
@@ -67,7 +67,7 @@ void dijkstra(int graph[CITY_COUNT][CITY_COUNT], int start, int result[CITY_COUN
 }
 
 int main() {
-    clock_t start_time, end_time;  // 시간 측정을 위해 변수 추가
+    clock_t start_time, end_time;
 
     int input[CITY_COUNT][CITY_COUNT] = {
         {0, 12, 15, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX}, // 서울
@@ -91,20 +91,18 @@ int main() {
         }
     }
 
-    // 실행 시간 측정 시작
     start_time = clock();
 
     for (int i = 0; i < CITY_COUNT; i++) {
         dijkstra(input, i, result[i]);
     }
 
-    // 실행 시간 측정 종료
     end_time = clock();
 
     print(result);
 
     double elapsed_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-    printf("running time: %.6f\n", elapsed_time);
+    printf("Running time: %.6f s\n", elapsed_time);
 
     return 0;
 }

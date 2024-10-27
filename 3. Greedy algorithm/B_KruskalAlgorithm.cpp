@@ -73,7 +73,7 @@ int main() {
         cout << "(" << edge.u << ", " << edge.v << ", " << edge.weight << ")\n";
     }
 
-    cout << "running time: " << duration.count() / 1000000.0 << " milliseconds (너무 짧아서 단위를 ms로 설정)" << endl;
+    cout << "Running time: " << duration.count() << " ns (nano)" << endl;
 
     return 0;
 }
