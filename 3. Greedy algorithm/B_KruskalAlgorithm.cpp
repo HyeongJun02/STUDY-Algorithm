@@ -49,20 +49,17 @@ int main() {
     auto start = high_resolution_clock::now();
 
     for (const auto& edge : edges) {
-        // 두 정점이 서로 다른 컴포넌트에 속해 있는 경우 추가
         if (component[edge.u] != component[edge.v]) {
             result.push_back(edge);
             int old_component = component[edge.v];
             int new_component = component[edge.u];
 
-            // 두 컴포넌트를 병합
             for (int i = 0; i < num_vertices; i++) {
                 if (component[i] == old_component) {
                     component[i] = new_component;
                 }
             }
         }
-        // 최소 스패닝 트리의 간선 수가 정점 수 - 1이면 종료
         if (result.size() == num_vertices - 1) {
             break;
         }

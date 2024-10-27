@@ -23,6 +23,41 @@ Node* createNode(char alp, int count) {
     return newNode;
 }
 
+int compareNodes(const void* a, const void* b) {
+    Node* nodeA = *(Node**)a;
+    Node* nodeB = *(Node**)b;
+    return nodeA->count - nodeB->count;
+}
+
+Node* createTree(int count[], char symbols[]) {
+    Node* nodes[N];
+    int nodeCount = N;
+
+    for (int i = 0; i < N; i++) {
+        nodes[i] = createNode(symbols[i], count[i]);
+    }
+
+    while (nodeCount > 1) {
+        // 빈도 오름차순으로 정렬
+        qsort(nodes, nodeCount, sizeof(Node*), compareNodes);
+
+        // 작은 것들 합치기
+        Node* left = nodes[0];
+        Node* right = nodes[1];
+        Node* newNode = createNode('\0', left->count + right->count);
+        newNode->left = left;
+        newNode->right = right;
+
+        for (int i = 2; i < nodeCount; i++) {
+            nodes[i - 2] = nodes[i];
+        }
+        nodes[nodeCount - 2] = newNode;
+        nodeCount--;
+    }
+
+    return nodes[0];
+}
+
 void print(Node* root, char* code, int depth) {
     if (root->left == NULL && root->right == NULL) {
         code[depth] = '\0';
@@ -42,6 +77,7 @@ void print(Node* root, char* code, int depth) {
 
 void huffman_code() {
     int count[N] = { 0 }; // 0: A, 1: T, 2: G, 3: C
+    char alp[N] = { 'A', 'T', 'G', 'C' };
 
     // 사용 빈도 체크
     for (int i = 0; content[i] != '\0'; i++) {
@@ -55,24 +91,17 @@ void huffman_code() {
 
     printf("count:\n");
     for (int i = 0; i < N; i++) {
-        char alp = "ATGC"[i];
-        printf("%c: %d\n", alp, count[i]);
+        printf("%c: %d\n", alp[i], count[i]);
     }
 
     printf("\n");
 
-    // 노드 생성
-    Node* root = createNode('\0', 0);
-    root->left = createNode('A', count[0]);
-    root->right = createNode('\0', 0);
-    root->right->left = createNode('\0', 0);
-    root->right->right = createNode('C', count[3]);
-    root->right->left->left = createNode('T', count[1]);
-    root->right->left->right = createNode('G', count[2]);
+    // 생성
+    Node* root = createTree(count, alp);
 
     // Huffman code 출력
-    char code[48];
-    printf("Huffman code:\n");
+    char code[100];
+    printf("Huffman codes:\n");
     print(root, code, 0);
 
     printf("\n");
@@ -80,6 +109,7 @@ void huffman_code() {
     // 입력
     char input[] = "10110010001110101010100";
     Node* current = root;
+
     printf("Result:\n");
     for (int i = 0; input[i] != '\0'; i++) {
         if (input[i] == '0') {
