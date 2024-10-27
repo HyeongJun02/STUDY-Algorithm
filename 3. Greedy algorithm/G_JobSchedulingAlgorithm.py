@@ -12,6 +12,7 @@ machines = [[] for _ in range(3)]
 
 # 시작 시간으로 정렬
 sorted_tasks = sorted(tasks.items(), key=lambda x: x[1][0])
+print(sorted_tasks)
 
 for task_name, (start, end) in sorted_tasks:
     for machine in machines:
