@@ -51,12 +51,12 @@ int main() {
     for (const auto& edge : edges) {
         if (component[edge.u] != component[edge.v]) {
             result.push_back(edge);
-            int old_component = component[edge.v];
-            int new_component = component[edge.u];
+            int bef_comp = component[edge.v];
+            int new_comp = component[edge.u];
 
             for (int i = 0; i < num_vertices; i++) {
-                if (component[i] == old_component) {
-                    component[i] = new_component;
+                if (component[i] == bef_comp) {
+                    component[i] = new_comp;
                 }
             }
         }

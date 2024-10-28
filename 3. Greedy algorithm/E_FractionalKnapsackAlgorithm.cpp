@@ -10,9 +10,8 @@ struct Goods {
     double vpw; // vpw = value per weight
 };
 
-// 정렬을 위해 비교 함수 작성
 bool compareGoods(const Goods& a, const Goods& b) {
-    return a.vpw > b.vpw; // 단위 무게 당 가치가 높은 순서대로 정렬
+    return a.vpw > b.vpw; // 단위 무게 당 가치가 높은 순서
 }
 
 void print(const vector<Goods>& goods, double total_weight, double total_value) {
@@ -25,9 +24,9 @@ void print(const vector<Goods>& goods, double total_weight, double total_value) 
 
 int main() {
     double total_weight = 0, total_value = 0;
-    double max_weight = 40; // 배낭의 최대 무게
+    double max_weight = 40;
 
-    // 데이터 하드코딩해서 넣기 (A: 백금, B: 금, C: 은, D: 주석)
+    // (A: 백금, B: 금, C: 은, D: 주석)
     vector<Goods> goodsSet = {
         { 'A', 10, 600000, 0 },  // 백금
         { 'B', 15, 750000, 0 },  // 금
@@ -40,10 +39,9 @@ int main() {
         item.vpw = item.value / item.weight;
     }
 
-    // 단위 무게 당 가치가 큰 순서대로 정렬
+    // 정렬
     sort(goodsSet.begin(), goodsSet.end(), compareGoods);
 
-    // 단위 무게 당 가치가 가장 큰 물건을 먼저 가져오기
     vector<Goods> goodsList = {
         { 'A', 0, 0, 0 },
         { 'B', 0, 0, 0 },

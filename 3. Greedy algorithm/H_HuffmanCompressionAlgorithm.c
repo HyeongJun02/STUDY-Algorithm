@@ -76,7 +76,8 @@ void print(Node* root, char* code, int depth) {
 }
 
 void huffman_code() {
-    int count[N] = { 0 }; // 0: A, 1: T, 2: G, 3: C
+    // (0:A / 1:T / 2:G / 3:C)
+    int count[N] = { 0 };
     char alp[N] = { 'A', 'T', 'G', 'C' };
 
     // 사용 빈도 체크
