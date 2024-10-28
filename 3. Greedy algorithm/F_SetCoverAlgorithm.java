@@ -22,8 +22,19 @@ public class F_SetCoverAlgorithm {
         Set<Integer> setCover = setCover(set_cover_node);
         long endTime = System.currentTimeMillis();
 
+        System.out.println("<Set Cover>");
         System.out.println("C = " + setCover);
         System.out.println("Running time: " + (endTime - startTime) + " ms");
+        
+        System.out.println("");
+
+        long optimalStartTime = System.currentTimeMillis();
+        Set<Integer> optimalSetCover = optimalSetCover(optimal_node);
+        long optimalEndTime = System.currentTimeMillis();
+
+        System.out.println("<Set Cover - Optimal Solution>");
+        System.out.println("C = " + optimalSetCover);
+        System.out.println("Running time: " + (optimalEndTime - optimalStartTime) + " ms");
     }
 
     public static Set<Integer> setCover(Map<Integer, List<Integer>> set_cover_node) {
@@ -61,5 +72,34 @@ public class F_SetCoverAlgorithm {
             }
         }
         return setCover;
+    }
+
+    public static Set<Integer> optimalSetCover(Map<Integer, List<Integer>> optimal_node) {
+        Set<Integer> best = null;
+        int min_size = Integer.MAX_VALUE;
+
+        // 그냥 다 해
+        List<Integer> nodes = new ArrayList<>(optimal_node.keySet());
+        int n = nodes.size();
+        for (int i = 1; i < (1 << n); i++) {
+            Set<Integer> candidateSet = new HashSet<>();
+            Set<Integer> covered = new HashSet<>();
+
+            for (int j = 0; j < n; j++) {
+                if ((i & (1 << j)) != 0) {
+                    int node = nodes.get(j);
+                    candidateSet.add(node);
+                    covered.add(node);
+                    covered.addAll(optimal_node.get(node));
+                }
+            }
+
+            if (covered.size() == n && candidateSet.size() < min_size) {
+                min_size = candidateSet.size();
+                best = new HashSet<>(candidateSet);
+            }
+        }
+
+        return best;
     }
 }
