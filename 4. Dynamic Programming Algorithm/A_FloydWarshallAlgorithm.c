@@ -84,16 +84,16 @@ int main() {
     printf("input:\n");
     print(input);
 
-    int dist[CITY_COUNT][CITY_COUNT];
+    int D[CITY_COUNT][CITY_COUNT];
 
     start_time = clock();
 
-    floyd_warshall(input, dist);
+    floyd_warshall(input, D);
 
     end_time = clock();
 
     printf("result:\n");
-    print(dist);
+    print(D);
 
     double elapsed_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
     printf("Running time: %.6f s\n", elapsed_time);
