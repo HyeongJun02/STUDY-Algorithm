@@ -31,10 +31,10 @@ void print(int a[CITY_COUNT][CITY_COUNT]) {
     printf("\n");
 }
 
-void floyd_warshall(int graph[CITY_COUNT][CITY_COUNT], int dist[CITY_COUNT][CITY_COUNT]) {
+void floyd_warshall(int graph[CITY_COUNT][CITY_COUNT], int D[CITY_COUNT][CITY_COUNT]) {
     for (int i = 0; i < CITY_COUNT; i++) {
         for (int j = 0; j < CITY_COUNT; j++) {
-            dist[i][j] = graph[i][j];
+            D[i][j] = graph[i][j];
         }
     }
 
@@ -42,9 +42,9 @@ void floyd_warshall(int graph[CITY_COUNT][CITY_COUNT], int dist[CITY_COUNT][CITY
     for (int k = 0; k < CITY_COUNT; k++) {
         for (int i = 0; i < CITY_COUNT; i++) {
             for (int j = 0; j < CITY_COUNT; j++) {
-                if (dist[i][k] != INT_MAX && dist[k][j] != INT_MAX
-                    && dist[i][k] + dist[k][j] < dist[i][j]) {
-                    dist[i][j] = dist[i][k] + dist[k][j];
+                if (D[i][k] != INT_MAX && D[k][j] != INT_MAX
+                    && D[i][k] + D[k][j] < D[i][j]) {
+                    D[i][j] = D[i][k] + D[k][j];
                 }
             }
         }
