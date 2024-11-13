@@ -67,7 +67,16 @@ int main() {
         {INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, 5, 19, 25, 0}        // 포항
     };
 
-    printf("입력 행렬:\n");
+    // no directed graph!!!
+    for (int i = 0; i < CITY_COUNT; i++) {
+        for (int j = 0; j < CITY_COUNT; j++) {
+            if (input[i][j] != INT_MAX) {
+                input[j][i] = input[i][j];
+            }
+        }
+    }
+
+    printf("input:\n");
     print(input);
 
     int dist[CITY_COUNT][CITY_COUNT];
@@ -82,7 +91,7 @@ int main() {
     print(dist);
 
     double elapsed_time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-    printf("Running Time: %.6f 초\n", elapsed_time);
+    printf("Running time: %.6f s\n", elapsed_time);
 
     return 0;
 }
