@@ -58,7 +58,7 @@ int main() {
         {0, 12, 15, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX}, // 서울
         {12, 0, INT_MAX, 10, 4, INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX},       // 천안
         {15, INT_MAX, 0, INT_MAX, INT_MAX, INT_MAX, INT_MAX, 7, 21, INT_MAX},       // 원주
-        {INT_MAX, 10, INT_MAX, 0, INT_MAX, INT_MAX, INT_MAX, 10, INT_MAX, INT_MAX}, // 대전
+        {INT_MAX, 10, INT_MAX, 0, 3, INT_MAX, INT_MAX, 10, INT_MAX, INT_MAX},       // 대전
         {INT_MAX, 4, INT_MAX, 3, 0, 13, INT_MAX, INT_MAX, INT_MAX, INT_MAX},        // 논산
         {INT_MAX, INT_MAX, INT_MAX, INT_MAX, 13, 0, 15, INT_MAX, INT_MAX, INT_MAX}, // 광주
         {INT_MAX, INT_MAX, INT_MAX, INT_MAX, INT_MAX, 15, 0, 9, INT_MAX, 5},        // 부산
