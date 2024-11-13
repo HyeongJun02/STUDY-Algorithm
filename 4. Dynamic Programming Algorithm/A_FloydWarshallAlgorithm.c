@@ -70,8 +70,13 @@ int main() {
     // no directed graph!!!
     for (int i = 0; i < CITY_COUNT; i++) {
         for (int j = 0; j < CITY_COUNT; j++) {
-            if (input[i][j] != INT_MAX) {
-                input[j][i] = input[i][j];
+            if (input[i][j] != input[j][i]) {
+                if (input[i][j] > input[j][i]){
+                    input[j][i] = input[i][j];
+                }
+                else {
+                    input[i][j] = input[j][i];
+                }
             }
         }
     }
