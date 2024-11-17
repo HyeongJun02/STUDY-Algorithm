@@ -40,9 +40,9 @@ def knapsack(n):
             # print("----------------------------------------")
 
     # 결과 출력
-    print(f"{"-":4s}  ", end="")
-    print(f"{"-":4s}  ", end="")
-    print(f"{"-":4s}  ", end="")
+    print("  -   ", end="")
+    print("  -   ", end="")
+    print("  -   ", end="")
     print(" | ", end="")
     for i in range(C):
         print(f"{i:2d}  ", end="")
@@ -50,9 +50,9 @@ def knapsack(n):
     for i in range(N):
         if i == 0:
             print("----------------------------------------------------------------")
-            print(f"{"물건":4s}", end="")
-            print(f"{"가치":4s}", end="")
-            print(f"{"무게":4s}", end="")
+            print(" 물건 ", end="")
+            print(" 가치 ", end="")
+            print(" 무게 ", end="")
             print(" | ", end="")
         else:
             print(f"{i:4d}  ", end="")
