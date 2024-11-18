@@ -18,21 +18,6 @@ struct Matrix {
 
 vector<Matrix> matrices;
 
-//void readFile(const string& filename) {
-//    ifstream file(filename);
-//    if (!file.is_open()) {
-//        cerr << "파일을 열기 실패요. " << filename << endl;
-//        return;
-//    }
-//
-//    string line;
-//    while (getline(file, line)) {
-//        cout << line << endl; // 파일 내용을 한 줄씩 출력
-//    }
-//
-//    file.close();
-//}
-
 void getSize(const string& filename) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -98,28 +83,7 @@ void getSize(const string& filename) {
     file.close();
 }
 
-void chainedMatrix() {
-    int n = matrices.size();
-    vector<vector<int>> C(n + 1, vector<int>(n + 1, 0));
-
-    // 대각선 처리 (0으로)
-    for (int i = 1; i <= n; i++) {
-        C[i][i] = 0;
-    }
-
-    for (int L = 2; L <= n; L++) {
-        for (int i = 1; i <= n - L + 1; i++) {
-            int j = i + L - 1;
-            C[i][j] = INT_MAX;
-            for (int k = i; k < j; k++) {
-                int cost = C[i][k] + C[k + 1][j] + matrices[i - 1].rows * matrices[k].cols * matrices[j - 1].cols;
-                if (cost < C[i][j]) {
-                    C[i][j] = cost;
-                }
-            }
-        }
-    }
-
+void printC(const vector<vector<int>>& C, int n) {
     cout << setw(8) << "C";
     for (int i = 1; i <= n; i++) {
         cout << setw(8) << i;
@@ -131,8 +95,7 @@ void chainedMatrix() {
         for (int j = 1; j <= n; j++) {
             if (j >= i) {
                 cout << setw(8) << C[i][j];
-            }
-            else {
+            } else {
                 cout << setw(8) << "-";
             }
         }
@@ -140,9 +103,46 @@ void chainedMatrix() {
     }
 }
 
+void chainedMatrix() {
+    int n = matrices.size();
+    vector<vector<int>> C(n + 1, vector<int>(n + 1, 0));
+
+    int d[n + 1];
+    for (int i = 0; i <= n; i++) {
+        if (i != n) {
+            // cout << "i != n" << endl;
+            d[i] = matrices[i].rows;
+        }
+        else {
+            // cout << "i == n" << endl;
+            d[i] = matrices[i - 1].cols;
+        }
+        // cout << "[d" << i << "]: " << d[i] << endl;
+    }
+
+    // 대각선 처리 (0으로)
+    for (int i = 1; i <= n; i++) {
+        C[i][i] = 0;
+    }
+
+    for (int L = 1; L <= n - 1; L++) {
+        for (int i = 1; i <= n - L; i++) {
+            int j = i + L;
+            C[i][j] = INT_MAX;
+            for (int k = i; k <= j - 1; k++) {
+                int temp = C[i][k] + C[k + 1][j] + (d[i - 1] * d[k] * d[j]);
+                if (temp < C[i][j]) {
+                    C[i][j] = temp;
+                }
+            }
+        }
+    }
+
+    printC(C, n);
+}
+
 int main() {
-    string filename = "matrix_input.txt"; // 입력 파일 이름
-    // readFile(filename);
+    string filename = "matrix_input.txt";
     getSize(filename);
     chainedMatrix();
     return 0;
