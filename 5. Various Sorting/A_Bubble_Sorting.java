@@ -5,20 +5,16 @@ import java.util.List;
 public class A_Bubble_Sorting {
 
     // sort
-    public static void bubbleSort(int[] array) {
-        int n = array.length;
-        boolean flag;
-        for (int i = 0; i < n - 1; i++) {
-            flag = false;
-            for (int j = 0; j < n - i - 1; j++) {   
-                if (array[j] > array[j + 1]) {
-                    int temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                    flag = true;
+    public static void bubbleSort(int[] A) {
+        int n = A.length;
+        for (int pass = 1; pass < n; pass++) {
+            for (int i = 1; i < n - pass + 1; i++) {   
+                if (A[i - 1] > A[i]) {
+                    int temp = A[i - 1];
+                    A[i - 1] = A[i];
+                    A[i] = temp;
                 }
             }
-            if (!flag) break;
         }
     }
 
