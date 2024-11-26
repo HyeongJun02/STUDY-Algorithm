@@ -22,28 +22,26 @@ void insertionSort(vector<int>& A) {
 // read
 vector<int> read(const string& fileName) {
     ifstream file(fileName);
-    if (!file.is_open()) {
-        throw runtime_error("READ FAIL" + fileName);
-    }
 
     vector<int> array;
     int num;
     while (file >> num) {
         array.push_back(num);
     }
+
     file.close();
+    
     return array;
 }
 
 // write
 void write(const string& fileName, const vector<int>& array) {
     ofstream file(fileName);
-    if (!file.is_open()) {
-        throw runtime_error("WRITE FAIL" + fileName);
-    }
+
     for (const int& num : array) {
         file << num << endl;
     }
+
     file.close();
 }
 

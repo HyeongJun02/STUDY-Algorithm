@@ -28,13 +28,14 @@ int *read(const char *fileName, int *size) {
     }
 
     int *array = (int *)malloc(MAX_NUMBERS * sizeof(int));
-
     int num;
     int index = 0;
+
     while (fscanf(file, "%d", &num) == 1) {
         array[index++] = num;
     }
     *size = index;
+
     fclose(file);
     return array;
 }
@@ -50,6 +51,7 @@ void write(const char *fileName, int *array, int size) {
     for (int i = 0; i < size; i++) {
         fprintf(file, "%d\n", array[i]);
     }
+
     fclose(file);
 }
 
