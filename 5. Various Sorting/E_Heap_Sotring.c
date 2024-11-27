@@ -4,20 +4,50 @@
 #define MAX_NUMBERS 1000
 
 // sort
-void heapSort(int *A, int size) {
-    int min;
-    for (int i = 0; i < size - 1; i++) {
-        min = i;
-        for (int j = i + 1; j < size - 1; j++) {
-            if (A[j] < A[min]) {
-                min = j;
-            }
-        }
+void downHeap(int *A, int i, int n) {
+    int leftChild = 2 * i + 1;
+    int rightChild = 2 * i + 2;
+    int now = i;
+
+    if (leftChild < n && A[leftChild] > A[now]) {
+        now = leftChild;
+    }
+
+    if (rightChild < n && A[rightChild] > A[now]) {
+        now = rightChild;
+    }
+
+    if (now != i) {
         int tmp = A[i];
-        A[i] = A[min];
-        A[min] = tmp;
+        A[i] = A[now];
+        A[now] = tmp;
+
+        downHeap(A, now, n);
     }
 }
+
+void buildHeap(int *A, int size) {
+    for (int i = size / 2 - 1; i >= 0; i--) {
+        downHeap(A, i, size);
+    }
+}
+
+void heapSort(int *A, int size) {
+    buildHeap(A, size);
+
+    int n = size;
+
+    for (int i = size - 1; i > 0; i--) {
+        int tmp = A[0];
+        A[0] = A[i];
+        A[i] = tmp;
+
+        n--;
+
+        downHeap(A, 0, n);
+    }
+}
+
 
 // read
 int *read(const char *fileName, int *size) {
@@ -58,7 +88,7 @@ void write(const char *fileName, int *array, int size) {
 // main
 int main() {
     const char *fin = "input.txt";
-    const char *fout = "selection_output.txt";
+    const char *fout = "heap_output.txt";
 
     int *array;
     int size;
