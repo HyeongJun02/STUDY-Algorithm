@@ -8,7 +8,7 @@ void selectionSort(int *A, int size) {
     int min;
     for (int i = 0; i < size - 1; i++) {
         min = i;
-        for (int j = i + 1; j < size - 1; j++) {
+        for (int j = i + 1; j < size; j++) {
             if (A[j] < A[min]) {
                 min = j;
             }
