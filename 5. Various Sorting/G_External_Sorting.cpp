@@ -6,7 +6,7 @@
 using namespace std;
 
 // sort
-void radixSort_LSD(vector<int>& A) {
+void external(vector<int>& A) {
     int n = A.size();
 }
 
@@ -39,13 +39,13 @@ void write(const string& fileName, const vector<int>& array) {
 // main
 int main() {
     const string inputFileName = "input.txt";
-    const string outputFileName = "_output.txt";
+    const string outputFileName = "external_output.txt";
 
     // read
     vector<int> array = read(inputFileName);
 
     // sort
-    radixSort_LSD(array);
+    external(array);
 
     // write
     write(outputFileName, array);

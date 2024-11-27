@@ -64,7 +64,6 @@ public class A_Bubble_Sorting {
 
             System.out.println("--- end ---");
             System.out.println(outputFileName);
-
         } catch (IOException e) {
             System.err.println("error: " + e.getMessage());
         }
