@@ -21,20 +21,20 @@ void insertionSort(vector<int>& A) {
 }
 void external(vector<int>& A) {
     int n = A.size();
-    int chunkSize = 100;
-    vector<int> sorted_data;
+    int chunk = 100;
+    vector<int> sorted;
 
-    for (int i = 0; i < n; i += chunkSize) {
+    for (int i = 0; i < n; i += chunk) {
         vector<int> buffer;
-        for (int j = i; j < i + chunkSize && j < n; ++j) {
+        for (int j = i; j < i + chunk && j < n; ++j) {
             buffer.push_back(A[j]);
         }
 
         insertionSort(A);
 
-        sorted_data.insert(sorted_data.end(), buffer.begin(), buffer.end());
+        sorted.insert(sorted.end(), buffer.begin(), buffer.end());
     }
-    sort(sorted_data.begin(), sorted_data.end());
+    sort(sorted.begin(), sorted.end());
 }
 
 // read
