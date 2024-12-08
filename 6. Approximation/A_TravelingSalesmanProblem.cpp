@@ -100,7 +100,6 @@ int main() {
     vector<bool> visited(n, false);
     dfs(0, tree, visited, order);
 
-    // 중복 제거
     vector<int> result;
     set<int> visitedNodes;
     for (int city : order) {
