@@ -3,54 +3,54 @@
 #include <math.h>
 #include <time.h>
 
-#define NUM_CITIES 8
+#define CROSSOVER_RATIO 1.0
+#define MUTATION_RATIO 0.01
+
+#define POINT_SIZE 8
 #define POP_SIZE 8
-#define CROSSOVER_RATE 1.0
-#define MUTATION_RATE 0.01
+
 #define MAX_GENERATIONS 1000
 
 typedef struct {
     char name;
     double x, y;
-} City;
+} Point;
 
 typedef struct {
-    int path[NUM_CITIES];
+    int path[POINT_SIZE];
     double distance;
 } Individual;
 
-City cities[NUM_CITIES] = {
+Point points[POINT_SIZE] = {
     {'A', 0, 3}, {'B', 7, 5}, {'C', 6, 0}, {'D', 4, 3},
     {'E', 1, 0}, {'F', 5, 3}, {'G', 2, 2}, {'H', 4, 1}
 };
 
 double calculateDistance(int path[]) {
     double total = 0.0;
-    for (int i = 0; i < NUM_CITIES - 1; i++) {
-        double dx = cities[path[i]].x - cities[path[i + 1]].x;
-        double dy = cities[path[i]].y - cities[path[i + 1]].y;
+    for (int i = 0; i < POINT_SIZE - 1; i++) {
+        double dx = points[path[i]].x - points[path[i + 1]].x;
+        double dy = points[path[i]].y - points[path[i + 1]].y;
         total += sqrt(dx * dx + dy * dy);
     }
-    // Return to start point
-    double dx = cities[path[NUM_CITIES - 1]].x - cities[path[0]].x;
-    double dy = cities[path[NUM_CITIES - 1]].y - cities[path[0]].y;
+    double dx = points[path[POINT_SIZE - 1]].x - points[path[0]].x;
+    double dy = points[path[POINT_SIZE - 1]].y - points[path[0]].y;
     total += sqrt(dx * dx + dy * dy);
     return total;
 }
 
 void initializePopulation(Individual population[]) {
     for (int i = 0; i < POP_SIZE; i++) {
-        for (int j = 1; j < NUM_CITIES; j++) {
+        for (int j = 1; j < POINT_SIZE; j++) {
             population[i].path[j - 1] = j;
         }
-        // Shuffle the path
-        for (int j = NUM_CITIES - 2; j > 0; j--) {
+        for (int j = POINT_SIZE - 2; j > 0; j--) {
             int k = rand() % (j + 1);
             int temp = population[i].path[j];
             population[i].path[j] = population[i].path[k];
             population[i].path[k] = temp;
         }
-        for (int j = NUM_CITIES - 1; j > 0; j--) {
+        for (int j = POINT_SIZE - 1; j > 0; j--) {
             population[i].path[j] = population[i].path[j - 1];
         }
         population[i].path[0] = 0;
@@ -59,20 +59,20 @@ void initializePopulation(Individual population[]) {
 }
 
 void crossover(int parent1[], int parent2[], int child[]) {
-    int start = rand() % (NUM_CITIES - 1) + 1;
-    int end = rand() % (NUM_CITIES - 1) + 1;
+    int start = rand() % (POINT_SIZE - 1) + 1;
+    int end = rand() % (POINT_SIZE - 1) + 1;
     if (start > end) {
         int temp = start;
         start = end;
         end = temp;
     }
-    int visited[NUM_CITIES] = {0};
+    int visited[POINT_SIZE] = {0};
     for (int i = start; i <= end; i++) {
         child[i] = parent1[i];
         visited[child[i]] = 1;
     }
     int current = 1;
-    for (int i = 1; i < NUM_CITIES; i++) {
+    for (int i = 1; i < POINT_SIZE; i++) {
         if (i >= start && i <= end) continue;
         while (visited[parent2[current]]) {
             current++;
@@ -84,9 +84,9 @@ void crossover(int parent1[], int parent2[], int child[]) {
 }
 
 void mutate(int path[]) {
-    if ((double)rand() / RAND_MAX < MUTATION_RATE) {
-        int i = rand() % (NUM_CITIES - 1) + 1;
-        int j = rand() % (NUM_CITIES - 1) + 1;
+    if ((double)rand() / RAND_MAX < MUTATION_RATIO) {
+        int i = rand() % (POINT_SIZE - 1) + 1;
+        int j = rand() % (POINT_SIZE - 1) + 1;
         int temp = path[i];
         path[i] = path[j];
         path[j] = temp;
@@ -129,11 +129,11 @@ void geneticAlgorithm() {
         }
     }
 
-    printf("Best path: ");
-    for (int i = 0; i < NUM_CITIES; i++) {
-        printf("%c ", cities[best.path[i]].name);
+    printf("이동 순서: ");
+    for (int i = 0; i < POINT_SIZE; i++) {
+        printf("%c ", points[best.path[i]].name);
     }
-    printf("\nTotal distance: %.2f\n", best.distance);
+    printf("\n이동 거리: %.2f\n", best.distance);
 }
 
 int main() {
