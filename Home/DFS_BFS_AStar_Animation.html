@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>DFS vs BFS vs A* 비교</title>
+  <style>
+    body { font-family: sans-serif; }
+    canvas { border: 1px solid black; margin: 10px; }
+    .row { display: flex; }
+    .legend { margin: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .box { width: 20px; height: 20px; border: 1px solid black; }
+  </style>
+</head>
+<body>
+  <h2>DFS vs BFS vs A* 탐색 비교</h2>
+
+  <div class="row">
+    <div>
+      <h3>DFS</h3>
+      <canvas id="canvasDFS"></canvas>
+    </div>
+    <div>
+      <h3>BFS</h3>
+      <canvas id="canvasBFS"></canvas>
+    </div>
+    <div>
+      <h3>A*</h3>
+      <canvas id="canvasAstar"></canvas>
+    </div>
+  </div>
+
+  <!-- 범례 -->
+  <div class="legend">
+    <div class="legend-item"><div class="box" style="background:white;"></div>빈칸</div>
+    <div class="legend-item"><div class="box" style="background:black;"></div>벽</div>
+    <div class="legend-item"><div class="box" style="background:lightblue;"></div>탐색 완료</div>
+    <div class="legend-item"><div class="box" style="background:yellow;"></div>최종 경로</div>
+    <div class="legend-item"><div class="box" style="background:blue;"></div>시작</div>
+    <div class="legend-item"><div class="box" style="background:red;"></div>목표</div>
+  </div>
+
+  <script>
+    // ─────────────────────
+    // 환경 설정
+    // ─────────────────────
+    const rows = 10, cols = 10;
+    const cellSize = 25;
+
+    // canvas 크기 자동 세팅
+    const canvasDFS = document.getElementById("canvasDFS");
+    const canvasBFS = document.getElementById("canvasBFS");
+    const canvasAstar = document.getElementById("canvasAstar");
+    [canvasDFS, canvasBFS, canvasAstar].forEach(c => {
+      c.width = cols * cellSize;
+      c.height = rows * cellSize;
+    });
+
+    // 0=빈칸, 1=벽
+    const grid = Array.from({ length: rows }, () =>
+      Array.from({ length: cols }, () => (Math.random() < 0.2 ? 1 : 0))
+    );
+    const start = { x: 0, y: 0 };
+    const goal = { x: rows - 1, y: cols - 1 };
+    grid[start.x][start.y] = 0;
+    grid[goal.x][goal.y] = 0;
+
+    class Node {
+      constructor(x, y, g = 0, h = 0, parent = null) {
+        this.x = x;
+        this.y = y;
+        this.g = g;
+        this.h = h;
+        this.f = g + h;
+        this.parent = parent;
+      }
+    }
+
+    function heuristic(a, b) {
+      return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
+
+    const dirs = [[0,1],[1,0],[0,-1],[-1,0]];
+
+    // ─────────────────────
+    // DFS
+    // ─────────────────────
+    function dfsAnimation(ctx) {
+      const stack = [new Node(start.x, start.y)];
+      const visited = [];
+      let path = [];
+      let finished = false;
+
+      function step() {
+        if (stack.length > 0 && !finished) {
+          const current = stack.pop();
+          if (visited.some(n => n.x === current.x && n.y === current.y)) {
+            requestAnimationFrame(step);
+            draw(ctx, visited, path);
+            return;
+          }
+          visited.push(current);
+
+          if (current.x === goal.x && current.y === goal.y) {
+            finished = true;
+            let temp = current;
+            while (temp) {
+              path.push(temp);
+              temp = temp.parent;
+            }
+            path.reverse();
+          }
+
+          for (let [dx, dy] of dirs) {
+            const nx = current.x + dx, ny = current.y + dy;
+            if (nx < 0 || ny < 0 || nx >= rows || ny >= cols) continue;
+            if (grid[nx][ny] === 1) continue;
+            if (visited.some(n => n.x === nx && n.y === ny)) continue;
+            stack.push(new Node(nx, ny, 0, 0, current));
+          }
+        }
+        draw(ctx, visited, path);
+        if (!finished) requestAnimationFrame(step);
+      }
+      step();
+    }
+
+    // ─────────────────────
+    // BFS
+    // ─────────────────────
+    function bfsAnimation(ctx) {
+      const queue = [new Node(start.x, start.y)];
+      const visited = [];
+      let path = [];
+      let finished = false;
+
+      function step() {
+        if (queue.length > 0 && !finished) {
+          const current = queue.shift();
+          if (visited.some(n => n.x === current.x && n.y === current.y)) {
+            requestAnimationFrame(step);
+            draw(ctx, visited, path);
+            return;
+          }
+          visited.push(current);
+
+          if (current.x === goal.x && current.y === goal.y) {
+            finished = true;
+            let temp = current;
+            while (temp) {
+              path.push(temp);
+              temp = temp.parent;
+            }
+            path.reverse();
+          }
+
+          for (let [dx, dy] of dirs) {
+            const nx = current.x + dx, ny = current.y + dy;
+            if (nx < 0 || ny < 0 || nx >= rows || ny >= cols) continue;
+            if (grid[nx][ny] === 1) continue;
+            if (visited.some(n => n.x === nx && n.y === ny)) continue;
+            queue.push(new Node(nx, ny, 0, 0, current));
+          }
+        }
+        draw(ctx, visited, path);
+        if (!finished) requestAnimationFrame(step);
+      }
+      step();
+    }
+
+    // ─────────────────────
+    // A*
+    // ─────────────────────
+    function astarAnimation(ctx) {
+      const openSet = [new Node(start.x, start.y)];
+      const closedSet = [];
+      let path = [];
+      let finished = false;
+
+      function step() {
+        if (openSet.length > 0 && !finished) {
+          openSet.sort((a, b) => a.f - b.f);
+          const current = openSet.shift();
+          closedSet.push(current);
+
+          if (current.x === goal.x && current.y === goal.y) {
+            finished = true;
+            let temp = current;
+            while (temp) {
+              path.push(temp);
+              temp = temp.parent;
+            }
+            path.reverse();
+          }
+
+          for (let [dx, dy] of dirs) {
+            const nx = current.x + dx, ny = current.y + dy;
+            if (nx < 0 || ny < 0 || nx >= rows || ny >= cols) continue;
+            if (grid[nx][ny] === 1) continue;
+            if (closedSet.some(n => n.x === nx && n.y === ny)) continue;
+
+            const g = current.g + 1;
+            const h = heuristic({x: nx, y: ny}, goal);
+            const neighbor = new Node(nx, ny, g, h, current);
+
+            const existing = openSet.find(n => n.x === nx && n.y === ny);
+            if (!existing || g < existing.g) {
+              openSet.push(neighbor);
+            }
+          }
+        }
+        draw(ctx, closedSet, path);
+        if (!finished) requestAnimationFrame(step);
+      }
+      step();
+    }
+
+    // ─────────────────────
+    // 공통: 캔버스 그리기
+    // ─────────────────────
+    function draw(ctx, visited, path) {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+      // grid
+      for (let i=0; i<rows; i++) {
+        for (let j=0; j<cols; j++) {
+          ctx.fillStyle = grid[i][j] === 1 ? "black" : "white";
+          ctx.fillRect(j*cellSize, i*cellSize, cellSize, cellSize);
+          ctx.strokeRect(j*cellSize, i*cellSize, cellSize, cellSize);
+        }
+      }
+
+      // 방문한 칸 (탐색 완료)
+      visited.forEach(n => {
+        ctx.fillStyle = "lightblue";
+        ctx.fillRect(n.y*cellSize, n.x*cellSize, cellSize, cellSize);
+      });
+
+      // 최종 경로
+      path.forEach(n => {
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(n.y*cellSize, n.x*cellSize, cellSize, cellSize);
+      });
+
+      // 시작점 & 목표
+      ctx.fillStyle = "blue";
+      ctx.fillRect(start.y*cellSize, start.x*cellSize, cellSize, cellSize);
+      ctx.fillStyle = "red";
+      ctx.fillRect(goal.y*cellSize, goal.x*cellSize, cellSize, cellSize);
+    }
+
+    // 실행
+    dfsAnimation(canvasDFS.getContext("2d"));
+    bfsAnimation(canvasBFS.getContext("2d"));
+    astarAnimation(canvasAstar.getContext("2d"));
+  </script>
+</body>
+</html>
