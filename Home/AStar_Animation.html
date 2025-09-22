@@ -5,11 +5,41 @@
   <title>A* Algorithm Demo</title>
   <style>
     canvas { border: 1px solid black; }
+    .legend {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-family: sans-serif;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .box {
+      width: 20px;
+      height: 20px;
+      border: 1px solid black;
+    }
   </style>
 </head>
 <body>
   <h2>A* 알고리즘 애니메이션</h2>
   <canvas id="gridCanvas" width="500" height="500"></canvas>
+
+  <!-- ─────────────────────
+       색상 범례 (Legend)
+       ───────────────────── -->
+  <div class="legend">
+    <div class="legend-item"><div class="box" style="background:white;"></div>빈칸</div>
+    <div class="legend-item"><div class="box" style="background:black;"></div>벽</div>
+    <div class="legend-item"><div class="box" style="background:lightgreen;"></div>탐색 후보(Open Set)</div>
+    <div class="legend-item"><div class="box" style="background:lightblue;"></div>탐색 완료(Closed Set)</div>
+    <div class="legend-item"><div class="box" style="background:yellow;"></div>최종 경로(Path)</div>
+    <div class="legend-item"><div class="box" style="background:blue;"></div>시작(Start)</div>
+    <div class="legend-item"><div class="box" style="background:red;"></div>목표(Goal)</div>
+  </div>
 
   <script>
     // ─────────────────────
