@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>A* Algorithm Demo</title>
+  <style>
+    canvas { border: 1px solid black; }
+  </style>
+</head>
+<body>
+  <h2>A* 알고리즘 애니메이션</h2>
+  <canvas id="gridCanvas" width="500" height="500"></canvas>
+
+  <script>
+    // ─────────────────────
+    // 1. 환경 설정
+    // ─────────────────────
+    const rows = 20, cols = 20;       // 격자 크기 (20x20)
+    const cellSize = 25;              // 칸 크기 (25px)
+    const canvas = document.getElementById("gridCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // ─────────────────────
+    // 2. 지도(grid) 생성 (0=빈칸, 1=벽)
+    // ─────────────────────
+    const grid = Array.from({ length: rows }, () =>
+      Array.from({ length: cols }, () => (Math.random() < 0.2 ? 1 : 0))
+    );
+
+    // 시작점(왼쪽 위), 목표점(오른쪽 아래) 지정
+    const start = { x: 0, y: 0 };
+    const goal = { x: rows - 1, y: cols - 1 };
+    grid[start.x][start.y] = 0; // 시작점은 반드시 빈칸
+    grid[goal.x][goal.y] = 0;   // 목표점도 반드시 빈칸
+
+    // ─────────────────────
+    // 3. Node 클래스 정의
+    // ─────────────────────
+    class Node {
+      constructor(x, y, g = 0, h = 0, parent = null) {
+        this.x = x;            // 노드 위치 (행)
+        this.y = y;            // 노드 위치 (열)
+        this.g = g;            // 시작점에서 현재까지의 실제 비용
+        this.h = h;            // 휴리스틱 (목표까지 추정 거리)
+        this.f = g + h;        // f = g + h (우선순위 비교용)
+        this.parent = parent;  // 어디서 왔는지 (경로 역추적용)
+      }
+    }
+
+    // 맨해튼 거리 휴리스틱 (상하좌우 격자에서 최적)
+    function heuristic(a, b) {
+      return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
+
+    // ─────────────────────
+    // 4. A* 알고리즘 준비
+    // ─────────────────────
+    const openSet = [new Node(start.x, start.y)]; // 탐색 후보
+    const closedSet = [];                         // 탐색 완료된 노드
+    let path = [];                                // 최종 경로
+    let finished = false;                         // 탐색 종료 여부
+
+    // ─────────────────────
+    // 5. A* 탐색 1단계 (애니메이션용 step)
+    // ─────────────────────
+    function step() {
+      if (openSet.length > 0 && !finished) {
+        // f값이 가장 작은 노드를 꺼냄
+        openSet.sort((a, b) => a.f - b.f);
+        const current = openSet.shift();
+        closedSet.push(current);
+
+        // 목표 도착 확인
+        if (current.x === goal.x && current.y === goal.y) {
+          finished = true;
+          let temp = current;
+          while (temp) {
+            path.push(temp);     // 경로를 역추적
+            temp = temp.parent;
+          }
+          path.reverse();        // 역추적했으니 반대로 뒤집음
+        }
+
+        // 이웃 탐색 (상,하,좌,우)
+        const dirs = [[0,1],[1,0],[0,-1],[-1,0]];
+        for (let [dx, dy] of dirs) {
+          const nx = current.x + dx, ny = current.y + dy;
+
+          // 지도 범위 벗어나면 무시
+          if (nx < 0 || ny < 0 || nx >= rows || ny >= cols) continue;
+          // 벽이면 무시
+          if (grid[nx][ny] === 1) continue;
+          // 이미 방문(closedSet)했으면 무시
+          if (closedSet.some(n => n.x === nx && n.y === ny)) continue;
+
+          // g, h, f 계산
+          const g = current.g + 1;
+          const h = heuristic({x: nx, y: ny}, goal);
+          const neighbor = new Node(nx, ny, g, h, current);
+
+          // openSet에 이미 있으면, g 값이 더 작은 경우만 갱신
+          const existing = openSet.find(n => n.x === nx && n.y === ny);
+          if (!existing || g < existing.g) {
+            openSet.push(neighbor);
+          }
+        }
+      }
+      draw();  // 현재 상태 그리기
+      if (!finished) requestAnimationFrame(step); // 다음 프레임으로 진행
+    }
+
+    // ─────────────────────
+    // 6. 캔버스 그리기
+    // ─────────────────────
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 기본 grid (흰색 = 빈칸, 검정 = 벽)
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+          ctx.fillStyle = grid[i][j] === 1 ? "black" : "white";
+          ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+          ctx.strokeRect(j * cellSize, i * cellSize, cellSize, cellSize);
+        }
+      }
+
+      // 이미 탐색된 칸 (하늘색)
+      closedSet.forEach(n => {
+        ctx.fillStyle = "lightblue";
+        ctx.fillRect(n.y * cellSize, n.x * cellSize, cellSize, cellSize);
+      });
+
+      // 탐색 후보 칸 (연두색)
+      openSet.forEach(n => {
+        ctx.fillStyle = "lightgreen";
+        ctx.fillRect(n.y * cellSize, n.x * cellSize, cellSize, cellSize);
+      });
+
+      // 최종 경로 (노란색)
+      path.forEach(n => {
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(n.y * cellSize, n.x * cellSize, cellSize, cellSize);
+      });
+
+      // 시작점 (파란색), 목표점 (빨간색)
+      ctx.fillStyle = "blue";
+      ctx.fillRect(start.y * cellSize, start.x * cellSize, cellSize, cellSize);
+      ctx.fillStyle = "red";
+      ctx.fillRect(goal.y * cellSize, goal.x * cellSize, cellSize, cellSize);
+    }
+
+    // ─────────────────────
+    // 7. 탐색 시작
+    // ─────────────────────
+    step();
+  </script>
+</body>
+</html>
